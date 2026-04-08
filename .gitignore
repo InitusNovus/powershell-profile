@@ -1,0 +1,13 @@
+# Machine-local profile overrides
+config.local.psd1
+local_backup/
+
+# Local VS Code workspace state
+.vscode/*
+!.vscode/settings.template.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

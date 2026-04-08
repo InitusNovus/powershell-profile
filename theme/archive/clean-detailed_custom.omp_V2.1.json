@@ -1,0 +1,166 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "transient_prompt": {
+    "template": "\ue285 ",
+    "foreground": "#FEF5ED",
+    "background": "transparent"
+  },
+  "console_title_template": "{{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "cache_duration": "none",
+            "macos": "\uf179 ",
+            "ubuntu": "\uf31b ",
+            "windows": "\udb80\udf72 "
+          },
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "<transparent,#FEF5ED>\ue0b2</>",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
+          "foreground": "#011627",
+          "background": "#FEF5ED",
+          "type": "os",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "time_format": "15:04"
+          },
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "<transparent,#575656>\ue0b2</>",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "foreground": "#d6deeb",
+          "background": "#575656",
+          "type": "time",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "<transparent,#516BEB>\ue0b2</>",
+          "template": "\udb80\udf5b MEM: {{ round .PhysicalPercentUsed .Precision }}% | {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1073741824.0) }}.{{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 10737418240.0) }}/{{ (div .PhysicalTotalMemory 1073741824.0)}}.{{ (div .PhysicalTotalMemory 10737418240.0)}}GiB \udb80\udf5b ",
+          "foreground": "#ffffff",
+          "background": "#516BEB",
+          "type": "sysinfo",
+          "style": "diamond"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "style": "roundrock",
+            "threshold": 0
+          },
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "\ue0b0",
+          "template": " {{ .FormattedMs }} ",
+          "foreground": "#011627",
+          "background": "#FEF5ED",
+          "type": "executiontime",
+          "style": "diamond"
+        }
+      ],
+      "newline": true
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "cache_duration": "none",
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "fetch_worktree_count": true
+          },
+          "leading_diamond": "\ue0b2",
+          "trailing_diamond": "\ue0b0",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "foreground": "#011627",
+          "background": "#17D7A0",
+          "type": "git",
+          "style": "diamond"
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "\u256d\u2500",
+          "type": "text",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": "\uf2c0 {{ .UserName }} \uf1fa {{ .HostName }} |",
+          "type": "shell",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none"
+          },
+          "template": " \uf292 ",
+          "type": "root",
+          "style": "plain"
+        },
+        {
+          "properties": {
+            "cache_duration": "none",
+            "folder_icon": "\uf07b ",
+            "folder_separator_icon": " \udb80\udc55 ",
+            "home_icon": "\udb80\udedc ",
+            "mapped_locations": {
+              "C:/Users/{{ .UserName }}/Desktop": "\uf108 ",
+              "C:/Users/{{ .UserName }}/Downloads": "\uf019 ",
+              "C:/Windows": "\udb80\udf72 ",
+              "~/Desktop": "\uf108 ",
+              "~/Downloads": "\uf019 ",
+              "C:/Users/{{ .UserName }}/Documents": "\udb80\ude19"
+            },
+            "max_depth": 5,
+            "max_width": 50,
+            "mixed_threshold": 4,
+            "style": "powerlevel"
+          },
+          "template": " {{ .Path }} ",
+          "type": "path",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "properties": {
+            "always_enabled": true,
+            "cache_duration": "none"
+          },
+          "template": "\u2570\u2500 ",
+          "type": "exit",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    }
+  ],
+  "version": 3
+}
