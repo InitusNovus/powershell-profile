@@ -25,6 +25,9 @@ function Import-ProfileConfig {
     OpenCodeConfigFolder = ".config\opencode"
     GoogleDrive   = $null
     Msys2Root     = $null
+    WslDistro     = "Ubuntu"
+    WslUser       = $null
+    WslDevFolder  = "dev"
   }
 
   foreach ($path in @($script:TemplateConfigPath, $script:LocalConfigPath)) {
@@ -101,6 +104,17 @@ $script:WorkspacePath = Resolve-HomePath $script:Config.WorkspaceFolder
 $script:OpenCodePath = Resolve-HomePath $script:Config.OpenCodeConfigFolder
 $script:GoogleDrivePath = if ($script:Config.GoogleDrive) { Resolve-HomePath $script:Config.GoogleDrive } else { $null }
 
+# WSL 경로 빌드 (Windows + WslUser 설정 시에만)
+$script:WslRootPath  = $null
+$script:WslHomePath  = $null
+$script:WslDevPath   = $null
+if ($IsWindows -and $script:Config.WslUser) {
+  $script:WslDistro   = $script:Config.WslDistro
+  $script:WslRootPath = "\\wsl$\$($script:WslDistro)"
+  $script:WslHomePath = "\\wsl$\$($script:WslDistro)\home\$($script:Config.WslUser)"
+  $script:WslDevPath  = Join-Path $script:WslHomePath $script:Config.WslDevFolder
+}
+
 Set-PoshPathEnv -Name "DESKTOP" -PathValue $script:DesktopPath
 Set-PoshPathEnv -Name "DOCUMENTS" -PathValue $script:DocumentsPath
 Set-PoshPathEnv -Name "DOWNLOADS" -PathValue $script:DownloadsPath
@@ -108,6 +122,9 @@ Set-PoshPathEnv -Name "DEV" -PathValue $script:DevPath
 Set-PoshPathEnv -Name "WORKSPACE" -PathValue $script:WorkspacePath
 Set-PoshPathEnv -Name "OPENCODE" -PathValue $script:OpenCodePath
 Set-PoshPathEnv -Name "GOOGLEDRIVE" -PathValue $script:GoogleDrivePath
+Set-PoshPathEnv -Name "WSL_ROOT" -PathValue $script:WslRootPath
+Set-PoshPathEnv -Name "WSL_HOME" -PathValue $script:WslHomePath
+Set-PoshPathEnv -Name "WSL_DEV"  -PathValue $script:WslDevPath
 
 # --- oh-my-posh init ---
 if (Get-Command oh-my-posh -ErrorAction SilentlyContinue) {
@@ -138,6 +155,11 @@ $GOOGLEDRIVE = $script:GoogleDrivePath
 $GDRIVE = $GOOGLEDRIVE
 $GD = $GOOGLEDRIVE
 
+# WSL shortcuts (Windows only, WslUser configured)
+$WROOT = $script:WslRootPath
+$WHOME = $script:WslHomePath
+$WDEV  = $script:WslDevPath
+
 $script:ShortcutNames = @(
   "DESKTOP",
   "DEV",
@@ -147,7 +169,10 @@ $script:ShortcutNames = @(
   "OC",
   "OPENCODE",
   "WORKSPACE",
-  "WS"
+  "WS",
+  "WROOT",
+  "WHOME",
+  "WDEV"
 )
 # ==== end ====
 

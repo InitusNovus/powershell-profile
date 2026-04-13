@@ -10,4 +10,12 @@
     DesktopFolder        = "Desktop"
     WorkspaceFolder      = "Desktop\Workspace"
     OpenCodeConfigFolder = ".config\opencode"
+
+    # WSL integration (Windows only)
+    # WslDistro: distro name used in \\wsl$\<distro> path
+    # WslUser: Linux username — set in config.local.psd1
+    # WslDevFolder: subfolder under WSL home for $WDEV shortcut
+    WslDistro     = "Ubuntu"
+    WslUser       = $null
+    WslDevFolder  = "dev"
 }
