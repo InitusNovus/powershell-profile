@@ -41,6 +41,7 @@ function Import-ProfileConfig {
     DesktopFolder = "Desktop"
     WorkspaceFolder = "Desktop\Workspace"
     OpenCodeConfigFolder = ".config\opencode"
+    LwsFolder     = $null
     GoogleDrive   = $null
     Msys2Root     = $null
     WslDistro     = "Ubuntu"
@@ -114,11 +115,29 @@ function Set-PoshPathEnv {
 
 $script:Config = Import-ProfileConfig
 
+# --- Extra Linux PATH (non-Windows only) ---
+# config.local.psd1의 ExtraLinuxPaths를 PATH 앞에 병합
+# "~" 또는 "$HOME" 접두어를 $HOME으로 resolve
+if (-not $IsWindows -and $script:Config.ExtraLinuxPaths) {
+  $sep = [System.IO.Path]::PathSeparator
+  foreach ($rawPath in $script:Config.ExtraLinuxPaths) {
+    $extraPath = if ($rawPath -and $rawPath.StartsWith('~')) { $rawPath.Replace('~', $HOME) } else { $rawPath }
+    if ($extraPath -and (Test-Path -LiteralPath $extraPath -ErrorAction SilentlyContinue)) {
+      $env:PATH = $extraPath + $sep + $env:PATH
+    }
+  }
+}
+# --- End ---
+
 $script:DesktopPath = Resolve-UserFolderPath "Desktop"
 $script:DocumentsPath = Resolve-UserFolderPath "Documents"
 $script:DownloadsPath = Resolve-UserFolderPath "Downloads"
 $script:DevPath = Resolve-HomePath $script:Config.DevFolder
 $script:WorkspacePath = Resolve-HomePath $script:Config.WorkspaceFolder
+$script:WorkspaceWslPath = $null
+if (-not $IsWindows -and $env:WSL_DISTRO_NAME -and $script:Config.LwsFolder) {
+  $script:WorkspaceWslPath = Resolve-HomePath $script:Config.LwsFolder
+}
 $script:OpenCodePath = Resolve-HomePath $script:Config.OpenCodeConfigFolder
 $script:GoogleDrivePath = if ($script:Config.GoogleDrive) { Resolve-HomePath $script:Config.GoogleDrive } else { $null }
 
@@ -138,6 +157,7 @@ Set-PoshPathEnv -Name "DOCUMENTS" -PathValue $script:DocumentsPath
 Set-PoshPathEnv -Name "DOWNLOADS" -PathValue $script:DownloadsPath
 Set-PoshPathEnv -Name "DEV" -PathValue $script:DevPath
 Set-PoshPathEnv -Name "WORKSPACE" -PathValue $script:WorkspacePath
+Set-PoshPathEnv -Name "WORKSPACE_WSL" -PathValue $script:WorkspaceWslPath
 Set-PoshPathEnv -Name "OPENCODE" -PathValue $script:OpenCodePath
 Set-PoshPathEnv -Name "GOOGLEDRIVE" -PathValue $script:GoogleDrivePath
 Set-PoshPathEnv -Name "WSL_ROOT" -PathValue $script:WslRootPath
@@ -167,6 +187,9 @@ $DESKTOP = $script:DesktopPath
 $DEV = $script:DevPath
 $WORKSPACE = $script:WorkspacePath
 $WS = $WORKSPACE
+$WORKSPACE_WSL = $script:WorkspaceWslPath
+$WSWSL = $WORKSPACE_WSL
+$LWS = $WORKSPACE_WSL
 $OPENCODE = $script:OpenCodePath
 $OC = $OPENCODE
 $GOOGLEDRIVE = $script:GoogleDrivePath
@@ -184,10 +207,13 @@ $script:ShortcutNames = @(
   "GD",
   "GDRIVE",
   "GOOGLEDRIVE",
+  "LWS",
   "OC",
   "OPENCODE",
   "WORKSPACE",
+  "WORKSPACE_WSL",
   "WS",
+  "WSWSL",
   "WROOT",
   "WHOME",
   "WDEV"

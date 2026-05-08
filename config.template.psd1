@@ -11,6 +11,14 @@
     WorkspaceFolder      = "Desktop\Workspace"
     OpenCodeConfigFolder = ".config\opencode"
 
+    # WSL-only Linux-native workspace shortcut target
+    # Keep as a literal path fragment/string; resolved at runtime when running inside WSL
+    LwsFolder            = $null
+
+    # Extra PATH entries for non-Windows (Linux/macOS)
+    # Array of paths (relative to $HOME or absolute); prepended to $linuxPaths
+    ExtraLinuxPaths = @()
+
     # WSL integration (Windows only)
     # WslDistro: distro name used in \\wsl$\<distro> path
     # WslUser: Linux username — set in config.local.psd1
