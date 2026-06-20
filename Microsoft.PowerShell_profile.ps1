@@ -29,7 +29,20 @@ if (-not $IsWindows) {
 # ======================================================================
 # ==== Profile config (template + local override) ====
 # ======================================================================
-$script:ProfileRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $PROFILE }
+# 심볼릭 링크를 통해 로드된 경우 $PSScriptRoot 는 링크의 논리적 위치(예: OneDrive)로
+# 잡히므로, 실제 물리적 타겟 디렉터리로 resolve 한다. (PowerShell 7.6 호환)
+$script:ProfileRoot = if ($PSScriptRoot) {
+    try {
+        $self = Get-Item $PSCommandPath -ErrorAction Stop
+        if ($self.LinkType -and $self.Target) {
+            Split-Path $self.Target -Parent
+        } else {
+            $PSScriptRoot
+        }
+    } catch {
+        $PSScriptRoot
+    }
+} else { Split-Path -Parent $PROFILE }
 $script:TemplateConfigPath = Join-Path $script:ProfileRoot "config.template.psd1"
 $script:LocalConfigPath = Join-Path $script:ProfileRoot "config.local.psd1"
 

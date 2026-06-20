@@ -163,11 +163,10 @@
       "segments": [
         {
           "options": {
-            "always_enabled": true,
             "cache_duration": "none"
           },
           "template": "\u2570\u2500 ",
-          "type": "exit",
+          "type": "text",
           "style": "plain"
         }
       ],
